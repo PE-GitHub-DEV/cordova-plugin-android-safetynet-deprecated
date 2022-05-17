@@ -29,35 +29,61 @@ public class SafetyNetCordova extends CordovaPlugin {
     super.initialize(cordova, webView);  
   }
 
-  public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException { 
-    if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this.cordova.getActivity().getApplicationContext())
+  public boolean execute(final String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException { 
+    
+      //////////////////////////////////
+      //////////////////////////////////
+      cordova.getThreadPool().execute(new Runnable() {
+          public void run() {
+              try
+              {
+        	  
+        	  
+             /* try
+    	      {
+    	  	Log.d(TAG, "nabil SafetyNetCordova before thread.sleep ");
+    	  	//Pause for 10 seconds
+    	  	Thread.sleep(10000);    
+    	  	Log.d(TAG, "nabil SafetyNetCordova after thread.sleep ");
+    	      }
+    	      catch(Throwable e)
+    	      {
+    	  	Log.d(TAG, "nabil SafetyNetCordova error ");
+    	      }*/
+        	  
+      ////////////////////////////////
+      //////////////////////////////////
+      
+    if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(cordova.getActivity().getApplicationContext())
     == ConnectionResult.SUCCESS) {    
     if(action.equals("attest")) {                      
         String nonceStr = args.getString(0);          
-        SafetyNet.getClient(this.cordova.getActivity()).attest(nonceStr.getBytes(), args.getString(1))
-            .addOnSuccessListener(this.cordova.getActivity(),
+        SafetyNet.getClient(cordova.getActivity()).attest(nonceStr.getBytes(), args.getString(1))
+            .addOnSuccessListener(cordova.getActivity(),
                 new OnSuccessListener<SafetyNetApi.AttestationResponse>() {
                     @Override
-                    public void onSuccess(SafetyNetApi.AttestationResponse response) {                                   
+                    public void onSuccess(SafetyNetApi.AttestationResponse response) {   
+                	Log.d(TAG, "nabil SSafetNet Attestation success  " + response.getJwsResult());
                         /*Success - SafetNet Attestation*/                               
                         callbackContext.success(response.getJwsResult());                                    
                     }
                 })
-            .addOnFailureListener(this.cordova.getActivity(), new OnFailureListener() {
+            .addOnFailureListener(cordova.getActivity(), new OnFailureListener() {
             @Override
                 public void onFailure(Exception e) {
                     if (e instanceof ApiException) {                                
-                                                
+                    Log.d(TAG, "nabil SSafetNet Attestation error ApiException " + e.getMessage());                                            
                     /** SafetyNet Failed */
                     callbackContext.error("failed "+e.getMessage());
-                } else {                               
+                } else {  
+                    Log.d(TAG, "nabil SSafetNet Attestation error Exception " + e.getMessage());   
                      /** SafetyNet Failed */
                     callbackContext.error("failed " + e.getMessage());
                 }
             }                        
         });
     } else if (action.equals("checkAppVerification")) {
-        SafetyNet.getClient(this.cordova.getActivity())
+        SafetyNet.getClient(cordova.getActivity())
             .isVerifyAppsEnabled()
             .addOnCompleteListener(new OnCompleteListener<SafetyNetApi.VerifyAppsUserResponse>() {
                 @Override
@@ -81,7 +107,7 @@ public class SafetyNetCordova extends CordovaPlugin {
 
     } else if (action.equals("listHarmfulApps")){
 
-        SafetyNet.getClient(this.cordova.getActivity())
+        SafetyNet.getClient(cordova.getActivity())
             .listHarmfulApps()
             .addOnCompleteListener(new OnCompleteListener<SafetyNetApi.HarmfulAppsResponse>() {
                 @Override
@@ -114,7 +140,7 @@ public class SafetyNetCordova extends CordovaPlugin {
         });
     } else if(action.equals("enableAppVerification")){
 
-            SafetyNet.getClient(this.cordova.getActivity())
+            SafetyNet.getClient(cordova.getActivity())
                 .enableVerifyApps()
                 .addOnCompleteListener(new OnCompleteListener<SafetyNetApi.VerifyAppsUserResponse>() {
                     @Override
@@ -140,6 +166,20 @@ public class SafetyNetCordova extends CordovaPlugin {
      /** Play services not found */
      callbackContext.error("Play Services not found");
    }
+    
+    //////////////////////////////////
+    //////////////////////////////////
+    
+              }
+              catch(JSONException e)
+              {
+	
+              }
+          }
+      });
+    //////////////////////////////////
+    //////////////////////////////////
+    
     return true;
   }
 
