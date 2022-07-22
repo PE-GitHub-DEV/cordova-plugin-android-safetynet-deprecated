@@ -31,7 +31,7 @@ public class SafetyNetCordova extends CordovaPlugin {
 
   public boolean execute(final String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException { 
     
-      ////////////////////////////////// /* [Azentio] fix #1378944 - Add Thread Runnable */
+      
 	  
       cordova.getThreadPool().execute(new Runnable() {
           public void run() {
@@ -48,7 +48,7 @@ public class SafetyNetCordova extends CordovaPlugin {
                 new OnSuccessListener<SafetyNetApi.AttestationResponse>() {
                     @Override
                     public void onSuccess(SafetyNetApi.AttestationResponse response) {   
-                	//Log.d(TAG, "nabil SSafetNet Attestation success  " + response.getJwsResult());
+                	//Log.d(TAG, " SSafetNet Attestation success  " + response.getJwsResult());
                         /*Success - SafetNet Attestation*/                               
                         callbackContext.success(response.getJwsResult());                                    
                     }
@@ -57,11 +57,11 @@ public class SafetyNetCordova extends CordovaPlugin {
             @Override
                 public void onFailure(Exception e) {
                     if (e instanceof ApiException) {                                
-                    //Log.d(TAG, "nabil SSafetNet Attestation error ApiException " + e.getMessage());                                            
+                    //Log.d(TAG, " SSafetNet Attestation error ApiException " + e.getMessage());                                            
                     /** SafetyNet Failed */
                     callbackContext.error("failed "+e.getMessage());
                 } else {  
-                    //Log.d(TAG, "nabil SSafetNet Attestation error Exception " + e.getMessage());   
+                    //Log.d(TAG, " SSafetNet Attestation error Exception " + e.getMessage());   
                      /** SafetyNet Failed */
                     callbackContext.error("failed " + e.getMessage());
                 }
@@ -162,7 +162,7 @@ public class SafetyNetCordova extends CordovaPlugin {
           }
       });
     
-    ////////////////////////////////// /* [Azentio] fix #1378944 - Add Thread Runnable */
+    
     
     return true;
   }
